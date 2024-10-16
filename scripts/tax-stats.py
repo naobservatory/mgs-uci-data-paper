@@ -8,12 +8,9 @@ from scipy.stats import gmean
 
 # Setting directories and S3 buckets
 workflow_results_dir = "../workflow_results"
-delivery_metadata_dir = "../delivery_metadata"
 work_dir = "../work"
-table_dir = "../tables"
 s3_base_url = "s3://nao-mgs-wb/"
 
-# Loading mgs-workflow results
 # Loading mgs-workflow results
 datasets = [
     "JR-2024-03-22-a",
@@ -26,7 +23,6 @@ datasets = [
 ]
 
 os.makedirs(workflow_results_dir, exist_ok=True)
-os.makedirs(work_dir, exist_ok=True)
 for dataset in datasets:
     local_folder_path = os.path.join(workflow_results_dir, dataset)
 
