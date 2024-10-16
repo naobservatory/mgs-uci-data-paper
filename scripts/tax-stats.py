@@ -50,7 +50,7 @@ bacteria_fractions = np.array([])
 virus_fractions = np.array([])
 archea_fractions = np.array([])
 eukaryota_fractions = np.array([])
-
+unclassified_fractions = np.array([])
 
 for delivery in os.listdir(workflow_results_dir):
     bracken_path = os.path.join(
@@ -70,26 +70,48 @@ for delivery in os.listdir(workflow_results_dir):
         )
         bracken_df = pd.read_csv(unzipped_bracken, sep="\t")
         # print(bracken_df)
-        non_ribo_bracken = bracken_df[bracken_df["ribosomal"] == True]
-        # print(non_ribo_bracken[non_ribo_bracken["name"] == "Bacteria"])
-        bacteria_shares = non_ribo_bracken[non_ribo_bracken["name"] == "Bacteria"][
+        ribo_bracken = bracken_df[bracken_df["ribosomal"] == True]
+        bacteria_shares = ribo_bracken[ribo_bracken["name"] == "Bacteria"][
             "fraction_total_reads"
         ]
-        virus_shares = non_ribo_bracken[non_ribo_bracken["name"] == "Viruses"][
+        virus_shares = ribo_bracken[ribo_bracken["name"] == "Viruses"][
             "fraction_total_reads"
         ]
-        archea_shares = non_ribo_bracken[non_ribo_bracken["name"] == "Archaea"][
+        archea_shares = ribo_bracken[ribo_bracken["name"] == "Archaea"][
             "fraction_total_reads"
         ]
-        eukaryota_shares = non_ribo_bracken[non_ribo_bracken["name"] == "Eukaryota"][
+        eukaryota_shares = ribo_bracken[ribo_bracken["name"] == "Eukaryota"][
             "fraction_total_reads"
         ]
         bacteria_fractions = np.append(bacteria_fractions, bacteria_shares)
         virus_fractions = np.append(virus_fractions, virus_shares)
         archea_fractions = np.append(archea_fractions, archea_shares)
         eukaryota_fractions = np.append(eukaryota_fractions, eukaryota_shares)
+    kraken_path = os.path.join(
+        workflow_results_dir,
+        delivery,
+        "output",
+        "results",
+        "taxonomy",
+        "kraken_reports_merged.tsv.gz",
+    )
+    if os.path.exists(kraken_path):
+        unzipped_kraken = kraken_path.replace(".gz", "")
+        subprocess.run(
+            ["gunzip", "-c", kraken_path],
+            stdout=open(unzipped_kraken, "w"),
+            check=True,
+        )
+        kraken_df = pd.read_csv(unzipped_kraken, sep="\t")
+        ribo_kraken = kraken_df[kraken_df["ribosomal"] == True]
+        # print(ribo_kraken)
+        unclassified_kraken = ribo_kraken[ribo_kraken["taxid"] == 0]
+        unclassified_share = unclassified_kraken["pc_reads_total"] / 100
+        unclassified_fractions = np.append(unclassified_fractions, unclassified_share)
+
 
 print("Bacteria: ", np.mean(bacteria_fractions))
 print("Virus: ", np.mean(virus_fractions))
 print("Archaea: ", np.mean(archea_fractions))
 print("Eukaryota: ", np.mean(eukaryota_fractions))
+print("Unclassified: ", np.mean(unclassified_fractions))
