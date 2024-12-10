@@ -76,7 +76,6 @@ def generate_table():
 
 
 def start():
-
     generate_table()
 
 
