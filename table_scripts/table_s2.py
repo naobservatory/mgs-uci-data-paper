@@ -24,6 +24,7 @@ def generate_table():
             "Archaea": 2157,
             "Eukaryota": 2759,
             "Unclassified": 0,
+            "Classified": 1,
         }
 
         kraken_path = os.path.join(
@@ -56,14 +57,8 @@ def generate_table():
             n_reads_archea = reads_by_group["Archaea"]
             n_reads_eukaryota = reads_by_group["Eukaryota"]
             n_reads_unclassified = reads_by_group["Unclassified"]
-
-            total_reads = (
-                n_reads_bacteria
-                + n_reads_virus
-                + n_reads_archea
-                + n_reads_eukaryota
-                + n_reads_unclassified
-            )
+            n_reads_classified = reads_by_group["Classified"]
+            total_reads = n_reads_unclassified + n_reads_classified
 
             bacteria_ra = f"{n_reads_bacteria / total_reads:.2%}"
             virus_ra = f"{n_reads_virus / total_reads:.2%}"
