@@ -11,7 +11,6 @@ from collections import defaultdict
 # Setting directories and S3 buckets
 workflow_results_dir = "../data/results"
 table_dir = "../tables"
-s3_base_url = "s3://nao-mgs-wb/"
 os.makedirs(workflow_results_dir, exist_ok=True)
 
 
