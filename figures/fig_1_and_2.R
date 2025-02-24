@@ -12,8 +12,8 @@ library(ggpubr)
 library(ggbeeswarm)
 
 # Import auxiliary scripts
-source("../scripts/aux_plot-theme.R")
-source("../scripts/aux_functions.R")
+source("fig_infra_scripts/aux_plot-theme.R")
+source("fig_infra_scripts/aux_functions.R")
 
 # Scales and palettes
 scale_fill_batch  <- purrr::partial(scale_fill_brewer, name = "Sample Group",
@@ -29,12 +29,13 @@ scale_shape_ribo <- purrr::partial(scale_shape_discrete, name="Ribodepletion")
 scale_color_delivery <- purrr::partial(scale_color_brewer, palette="Dark2", name="Delivery")
 scale_fill_delivery <- purrr::partial(scale_fill_brewer, palette="Dark2", name="Delivery")
 
-#==============================================================================
+# ==============================================================================
 # 1. Set input directories
-#==============================================================================
+# ==============================================================================
 
 # Set input dir
 data_dir <- "../data"
+tables_dir <- "../tables"
 
 # Structured subsubdirectories
 log_dir <- file.path(data_dir, "logging")
@@ -46,7 +47,7 @@ results_dir <- file.path(data_dir, "results")
 #==============================================================================
 
 # Get metadata paths
-metadata_path <- file.path(data_dir, "bio_sample_table.tsv")
+metadata_path <- file.path(tables_dir, "bio_sample_table.tsv")
 
 # Import metadata
 metadata <- read_tsv(metadata_path, show_col_types = FALSE) %>%
@@ -115,7 +116,7 @@ g_basic <- ggplot(basic_stats_raw_metrics,
   scale_x_discrete(name = "Date") +
   scale_y_continuous(expand = c(0,0),
                     limits = function(x) c(0, max(x) * 1.1)) +  # Set upper limit to 10% above max value
-  scale_fill_brewer(palette = "Dark2", name = "Sequencing\nMachine") +  # Using Dark2 palette for sequencer colors
+  scale_fill_brewer(palette = "Dark2", name = "Sequencing\nPlatform") +  # Using Dark2 palette for sequencer colors
   facet_grid(metric ~ ., scales = "free", space = "free_x", switch = "y") +
   theme_tilt +
   theme(
@@ -134,7 +135,7 @@ ggsave("fig_1.png", g_basic, width = 10, height = 5)
 g_qual <- ggplot(mapping = aes(color = sequencer, linetype = read_pair,
                               group = interaction(sample, read_pair))) +
   scale_linetype_discrete(name = "Read Pair") +
-  scale_color_brewer(palette = "Dark2", name = "Sequencing\nMachine") +
+  scale_color_brewer(palette = "Dark2", name = "Sequencing\nPlatform") +
   guides(color = guide_legend(nrow = 1, byrow = TRUE),
          linetype = guide_legend(nrow = 1, byrow = TRUE)) +
   theme_base
